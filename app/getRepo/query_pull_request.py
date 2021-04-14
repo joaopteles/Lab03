@@ -1,4 +1,4 @@
-import query_utils
+import app.getRepo.query_utils as query_utils
 
 query_template = """query MyQuery {
   repository(name: $name, owner: $owner) {
@@ -35,15 +35,18 @@ query_template = """query MyQuery {
   }
 }"""
 
+
 def parse_data(res):
-  pull_requests = res['data']['repository']['pullRequests']['nodes']
-  page_info = res['data']['repository']['pullRequests']['pageInfo']
-  total_count = res['data']['repository']['pullRequests']['totalCount']
-  rate_limit = res['data']['rateLimit']
-  return {"pull_requests": pull_requests, "page_info": page_info, "rate_limit": rate_limit, 'total_count': total_count}
+    pull_requests = res['data']['repository']['pullRequests']['nodes']
+    page_info = res['data']['repository']['pullRequests']['pageInfo']
+    total_count = res['data']['repository']['pullRequests']['totalCount']
+    rate_limit = res['data']['rateLimit']
+    return {"pull_requests": pull_requests, "page_info": page_info, "rate_limit": rate_limit, 'total_count': total_count}
+
 
 def get_pull_requests(repo_name, repo_owner, first, after):
-  params = {"$name": repo_name, "$owner": repo_owner, "$first": first, "$after": after}
-  query = query_utils.create_query(params, query_template)
-  data = query_utils.execute_query(query)
-  return parse_data(data)
+    params = {"$name": repo_name, "$owner": repo_owner,
+              "$first": first, "$after": after}
+    query = query_utils.criar_query(params, query_template)
+    data = query_utils.execute_query(query)
+    return parse_data(data)

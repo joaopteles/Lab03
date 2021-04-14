@@ -1,12 +1,14 @@
 
-from app.api.getRepo import get_repositories
+from app.getRepo.query_repository import get_repositories
 import app.dados.processarPullRequests as processarPullRequests
-import app.csv_manager.state_manager_repo as sm
+import app.csv.csvRepo as sm
+
 
 def repositorioValido(repo):
     merged_count = repo['merged']['totalCount']
     closed_count = repo['closed']['totalCount']
     return merged_count + closed_count >= 100
+
 
 def repositorioData(repo):
     return {
@@ -18,6 +20,7 @@ def repositorioData(repo):
         "pull_requests_closed": repo['closed']['totalCount']
     }
 
+
 def iniciar(repo_first, repo_limit):
     initial_page_info, initial_total = sm.load_repo_state()
     total = initial_total
@@ -28,8 +31,9 @@ def iniciar(repo_first, repo_limit):
         return
 
     while(repo_limit - total > 0):
-        data = get_repositories(repo_first, page_info['endCursor'])     
-        repositories = [ repositorioData(r) for r in data['repositories'] if repositorioValido(r)]
+        data = get_repositories(repo_first, page_info['endCursor'])
+        repositories = [repositorioData(
+            r) for r in data['repositories'] if repositorioValido(r)]
         size = 0
         if(len(repositories) + total > repo_limit):
             exceed = len(repositories) + total - repo_limit

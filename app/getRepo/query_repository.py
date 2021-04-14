@@ -1,4 +1,4 @@
-import query_utils
+import app.getRepo.query_utils as query_utils
 
 query_template = """{
   search(query: "stars:>100", type: REPOSITORY, first: $first, after: $after) {
@@ -29,13 +29,16 @@ query_template = """{
   }
 }"""
 
+
 def parse_data(res):
-  repositories = res['data']['search']['nodes']
-  page_info = res['data']['search']['pageInfo']
-  rate_limit = res['data']['rateLimit']
-  return {"repositories": repositories, "page_info": page_info, "rate_limit": rate_limit}
+    repositories = res['data']['search']['nodes']
+    page_info = res['data']['search']['pageInfo']
+    rate_limit = res['data']['rateLimit']
+    return {"repositories": repositories, "page_info": page_info, "rate_limit": rate_limit}
+
 
 def get_repositories(first, after):
-  query = query_utils.create_query({"$after": after, "$first": first}, query_template)
-  data = query_utils.execute_query(query)
-  return parse_data(data)
+    query = query_utils.criar_query(
+        {"$after": after, "$first": first}, query_template)
+    data = query_utils.execute_query(query)
+    return parse_data(data)
